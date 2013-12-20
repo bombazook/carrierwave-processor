@@ -1,15 +1,15 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'carrierwave/processing/version'
+require 'carrierwave/processor/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "carrierwave-processing"
+  spec.name          = "carrierwave-processor"
   spec.version       = Carrierwave::Processing::VERSION
   spec.authors       = ["Alexander Kostrov"]
   spec.email         = ["bombazook@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = "Simple dsl cover for carrierwave distinct processing declaration"
+  spec.summary       = "carrierwave distinct processing declaration"
   spec.homepage      = ""
   spec.license       = "MIT"
 

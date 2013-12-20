@@ -1,5 +1,5 @@
 require 'active_support'
-require "carrierwave/processing/version"
+require "carrierwave/processor/version"
 
 module Carrierwave
   module Processing
