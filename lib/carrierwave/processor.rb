@@ -1,17 +1,13 @@
 require 'active_support'
+require 'carrierwave'
 require "carrierwave/processor/version"
+require 'carrierwave/processor/node'
+require 'carrierwave/processor/uploader_dsl'
 
-module Carrierwave
-  module Processing
-    def self.init_local_variable_and_accessors instance, var_name
-      class << instance
-        attr_reader var_name
-      end
-      proc_var = instance.instance_variable_get "@#{options[:variable]}"
-      if proc_var.nil?
-        instance.instance_variable_set("@#{options[:variable]}", []) 
-        proc_var = instance.instance_variable_get "@#{options[:variable]}"
-      end
+module CarrierWave
+  module Processor
+    class << self
+      attr_accessor :processors
     end
 
     def self.conditions_merge *args
@@ -37,3 +33,6 @@ module Carrierwave
     end
   end
 end
+
+Object.send :include, CarrierWave::Processor::Dsl
+CarrierWave::Uploader::Base.extend CarrierWave::Processor::UploaderDsl

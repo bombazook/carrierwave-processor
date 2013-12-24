@@ -1,18 +1,20 @@
-require_relative 'processor'
-
-module Carrierwave
-  module Processing
+module CarrierWave
+  module Processor
     module Dsl
       def carrierwave_processor *args, &block
         options = args.extract_options!
-        options[:variable] ||= :processors
         name = args.first
         if name
-          processor = ::Carrierwave::Processing::Processor.new options
+          processor = Node.new options
           processor.name = name
           processor.instance_eval &block
-          proc_var = ::Carrierwave::Processing.init_local_variable_and_accessors(self, options[:variable])
-          proc_var << processor
+          if self.kind_of? CarrierWave::Processor::Node
+            self.processors ||= {}
+            self.processors[name] = processor
+          else
+            ::CarrierWave::Processor.processors ||= {}
+            ::CarrierWave::Processor.processors[name] = processor
+          end
           return processor
         end
       end
