@@ -11,11 +11,11 @@ module CarrierWave
 
       def initialize opts={}
         @cw_processors = []
+        @processors = {}
         @options = opts
       end
 
       def process *args, &block
-        opts = args.extract_options!
         processor = {:args => args, :block => block}
         @cw_processors << processor
       end

@@ -6,6 +6,10 @@ require 'carrierwave/processor/uploader_dsl'
 
 module CarrierWave
   module Processor
+
+    class ProcessorNotFoundError < ::StandardError
+    end
+
     class << self
       attr_accessor :processors
     end
