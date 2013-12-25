@@ -32,25 +32,25 @@ module CarrierWave
         end
 
         def load_cw_versions processor, options = {}
-          conditions = options[:conditions] || []
-          processor.processors.each do |name, version|
-            new_conditions = (conditions + [version.options[:if]]).compact
+          conditions = options.delete(:conditions) || []
+          processor.processors.each do |name, v|
+            new_conditions = (conditions + [v.options[:if]]).compact
             condition = ::CarrierWave::Processor.conditions_merge(*new_conditions) unless new_conditions.empty?
-            version_options = version.options
+            version_options = v.options
             version_options.merge! options if options
             version_options.merge!(:if => condition) if condition
             if version_options.empty?
               version name do
-                load_cw_processors version
+                load_cw_processors v
               end
             else
               version name, version_options do
-                load_cw_processors version
+                load_cw_processors v
               end
             end
-            next_level_options = {:from_version => version.name}
+            next_level_options = {:from_version => name}
             next_level_options.merge!(:conditions => new_conditions) unless conditions.empty?
-            load_cw_versions version, next_level_options
+            load_cw_versions v, next_level_options
           end
         end
     end

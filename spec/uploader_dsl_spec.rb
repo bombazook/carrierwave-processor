@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe CarrierWave::Processor::UploaderDsl do
+  before :each do 
+    CarrierWave::Processor.stub(:conditions_merge) do |*args|
+      if args.empty?
+        nil
+      elsif (args.length == 1)
+        args.first
+      else
+        args
+      end
+    end
+  end
   before :each do
     if Object.constants.include?(:FooUploader)
       Object.send(:remove_const, :FooUploader)
@@ -68,11 +79,61 @@ describe CarrierWave::Processor::UploaderDsl do
 
   it "calls inner version processors without if option merge" do
     carrierwave_processor :some_processor do
-      version :some_version do
-        process :another_version, :if => :abrakadabra
+      version :some_version, :if => :nyasha do
+        process :processing, :if => :abrakadabra
       end
     end
-    FooUploader.should_receive(:version).with(:some_version)
+    FooUploader.should_receive(:process).with(:processing => [], :if => :abrakadabra)
+    FooUploader.send(:use_processor, :some_processor, :if => :kuku)
+  end
+
+  it 'multiple versions merges correctly' do
+    
+    carrierwave_processor :some_processor do
+      process :root_process, :if => :e
+      process :root2_process
+      version :a2_version do
+        process :a3_process
+        process :a4_process, :if => :a4
+      end
+      version :a_version, :if => :b do
+        process :a_process, :if => :f
+        process :a2_process
+        version :b_version do
+          process :b_process, :if => :e
+          process :b2_process
+          version :c_version, :if => :c do
+            process :c_process, :if => :d
+            process :c2_process
+            version :d_version do
+              process :d_process, :if => :e
+              process :d2_process
+            end
+          end
+        end
+      end
+    end
+
+    FooUploader.should_receive(:version).with(:a2_version, :if => :root).and_call_original
+    FooUploader.should_receive(:version).with(:a_version, :if => [:root, :b]).and_call_original
+    FooUploader.should_receive(:version).with(:b_version, :from_version => :a_version, :if => [:root, :b]).and_call_original
+    FooUploader.should_receive(:version).with(:c_version, :from_version => :b_version, :if => [:root, :b, :c]).and_call_original
+    FooUploader.should_receive(:version).with(:d_version, :from_version => :c_version, :if => [:root, :b, :c]).and_call_original
+
+    FooUploader.should_receive(:process).with(:root_process => [], :if => [:root, :e])
+    FooUploader.should_receive(:process).with(:root2_process => [], :if => :root)
+    FooUploader.should_receive(:process).with(:a3_process => [])
+    FooUploader.should_receive(:process).with(:a4_process => [], :if => :a4)
+    FooUploader.should_receive(:process).with(:a_process => [], :if => :f)
+    FooUploader.should_receive(:process).with(:a2_process => [])
+    FooUploader.should_receive(:process).with(:b_process => [], :if => :e)
+    FooUploader.should_receive(:process).with(:b2_process => [])
+    FooUploader.should_receive(:process).with(:c_process => [], :if => :d)
+    FooUploader.should_receive(:process).with(:c2_process => [])
+    FooUploader.should_receive(:process).with(:d_process => [], :if => :e)
+    FooUploader.should_receive(:process).with(:d2_process => [])
+
+    FooUploader.send(:use_processor, :some_processor, :if => :root)
   end
 
 end

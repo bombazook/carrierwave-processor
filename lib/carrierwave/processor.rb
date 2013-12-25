@@ -17,6 +17,7 @@ module CarrierWave
     def self.conditions_merge *args
       args.compact!
       return nil if args.empty?
+      return args.first if args.length == 1
       lambda do |uploader, options|
         args.inject(true) do |accum, condition|
           break false unless accum
