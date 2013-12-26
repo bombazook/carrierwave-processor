@@ -1,29 +1,51 @@
-# Carrierwave::Processing
-
-TODO: Write a gem description
+# Carrierwave::Processor
 
 ## Installation
+To use with Bundler:
 
-Add this line to your application's Gemfile:
+    gem 'carrierwave-processor', '~> 1.0'
 
-    gem 'carrierwave-processing'
 
-And then execute:
+To require in non-rails
+    
+    require 'carrierwave/processor'
 
-    $ bundle
+## Use
 
-Or install it yourself as:
+Now you can write groups of Carrierwave processors and versions outside of Uploader
 
-    $ gem install carrierwave-processing
 
-## Usage
+Just use **carrierwave_processor** somewhere for processor declaration
+    
+    carrierwave_processor :image do
+      process :fix_exif_rotation
+      process :convert => 'jpg'
+      version :square do
+        process :scale => [100, 100]
+      end
 
-TODO: Write usage instructions here
+      version :default do
+        process :scale => [500, 500]
+      end
 
-## Contributing
+      version :small do
+        process :scale_to_fit => [100, 100]
+      end
+      
+      def fix_exif_rotation
+        manipulate! do |img|
+          img.tap(&:auto_orient)
+        end
+      end
+    end
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+
+and use_processor in Uploader
+
+    class SomeUploader < CarrierWave::Uploader::Base
+      use_processor :image, :if => :image?
+
+      def image? m
+       # ...
+      end
+    end
