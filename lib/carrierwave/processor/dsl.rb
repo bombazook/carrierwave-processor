@@ -21,9 +21,9 @@ module CarrierWave
 
       def find_carrierwave_processor name
         if self.kind_of? CarrierWave::Processor::Node
-          self.processors[name.to_sym]
+          self.processors && self.processors[name.to_sym]
         else
-          CarrierWave::Processor.processors[name.to_sym]
+          CarrierWave::Processor.processors && CarrierWave::Processor.processors[name.to_sym]
         end
       end
     end

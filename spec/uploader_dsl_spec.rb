@@ -136,4 +136,9 @@ describe CarrierWave::Processor::UploaderDsl do
     FooUploader.send(:use_processor, :some_processor, :if => :root)
   end
 
+  it "doesnt raise NoMethodError when no processor declared" do
+    CarrierWave::Processor.processors = nil
+    expect {FooUploader.send(:use_processor, :some_processor) }.to raise_error(CarrierWave::Processor::ProcessorNotFoundError)
+  end
+
 end
