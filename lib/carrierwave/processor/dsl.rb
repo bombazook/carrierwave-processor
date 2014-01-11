@@ -5,9 +5,12 @@ module CarrierWave
         options = args.extract_options!
         name = args.first
         if name
-          processor = Node.new options
+          if block_given? 
+            processor = Node.new(options, &block)
+          else
+            processor = Node.new(options)
+          end
           processor.name = name
-          processor.instance_eval &block if block
           if self.kind_of? CarrierWave::Processor::Node
             self.processors ||= {}
             self.processors[name] = processor

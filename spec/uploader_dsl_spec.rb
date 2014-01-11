@@ -141,4 +141,19 @@ describe CarrierWave::Processor::UploaderDsl do
     expect {FooUploader.send(:use_processor, :some_processor) }.to raise_error(CarrierWave::Processor::ProcessorNotFoundError)
   end
 
+  it "includes declared methods in each version" do
+    carrierwave_processor :some_proc do
+      def some_method
+      end
+      version :test do
+        def some_method2
+        end
+      end
+    end
+    FooUploader.send(:use_processor, :some_proc)
+    FooUploader.new.should respond_to :some_method
+    FooUploader.new.should_not respond_to :some_method2
+    FooUploader.versions[:test][:uploader].new.should respond_to :some_method2
+  end
+
 end

@@ -11,6 +11,7 @@ module CarrierWave
           passing_in_options = {}
           passing_in_options.merge!(:conditions => conditions) unless conditions.empty?
           if processor and processor = find_carrierwave_processor(processor)
+            include processor
             load_cw_processors processor, passing_in_options
             load_cw_versions processor, passing_in_options
           else
@@ -27,7 +28,7 @@ module CarrierWave
             new_processors = ::CarrierWave::Processor.arguments_merge *cw_processor[:args]
             new_conditions = (conditions + [new_processors[:if]]).compact
             new_processors[:if] = ::CarrierWave::Processor.conditions_merge(*new_conditions) unless new_conditions.empty?
-            process new_processors
+            process *[new_processors, cw_processor[:block]].compact
           end
         end
 
@@ -41,10 +42,12 @@ module CarrierWave
             version_options.merge!(:if => condition) if condition
             if version_options.empty?
               version name do
+                include v
                 load_cw_processors v
               end
             else
               version name, version_options do
+                include v
                 load_cw_processors v
               end
             end
