@@ -152,7 +152,6 @@ describe CarrierWave::Processor::UploaderDsl do
     FooUploader.should respond_to :some_method
     FooUploader.should_not respond_to :some_method2
     FooUploader.versions[:test][:uploader].should respond_to :some_method2
-
   end
 
 end
