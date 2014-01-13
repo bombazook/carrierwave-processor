@@ -1,12 +1,13 @@
 require 'delegate'
 
-class Injector < SimpleDelegator
+class Injector < Module
 
-  def initialize uploader, options = {}, &block
-    super(uploader)
-    @outer_version = options.delete(:outer_version)
-    @options = options
-    self.instance_eval &block
+  def initialize uploader, opts = {}, &block
+    @uploader = uploader
+    @outer_version = opts.delete(:outer_version)
+    @options = opts
+    self.class_eval &block
+    @uploader.extend self
   end
 
   def process *args, &block
@@ -15,7 +16,7 @@ class Injector < SimpleDelegator
       new_if = ::CarrierWave::Processor.conditions_merge(@options[:if], processed_options[:if])
       processed_options[:if] = new_if if new_if
     end
-    __getobj__.process processed_options, &block
+    @uploader.process processed_options, &block
   end
 
   def version *args, &block
@@ -29,9 +30,13 @@ class Injector < SimpleDelegator
     passing_options = {:if => ifs_array}
     passing_options[:outer_version] = args.first if args.first
     version_args = version_options.empty? ? args : (args + [version_options])
-    __getobj__.version *version_args do
+    @uploader.version *version_args do
       Injector.new(self, passing_options, &block)
     end
+  end
+
+  def method_missing *args, &block
+    @uploader.send *args, &block
   end
 
   def delay *args, &block
