@@ -1,7 +1,7 @@
 require 'active_support'
 require 'carrierwave'
 require "carrierwave/processor/version"
-require 'carrierwave/processor/node'
+require "carrierwave/processor/injector"
 require 'carrierwave/processor/uploader_dsl'
 
 module CarrierWave
@@ -15,9 +15,14 @@ module CarrierWave
     end
 
     def self.conditions_merge *args
+      args.flatten!
       args.compact!
       return nil if args.empty?
       return args.first if args.length == 1
+      self.merge_multiple_conditions *args
+    end
+
+    def self.merge_multiple_conditions *args
       lambda do |uploader, options|
         args.inject(true) do |accum, condition|
           break false unless accum

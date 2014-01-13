@@ -6,56 +6,20 @@ module CarrierWave
 
       def use_processor *args
         options = args.extract_options!
-        conditions = [options.delete(:conditions) || options[:if]].flatten.compact
         args.each do |processor|
-          passing_in_options = {}
-          passing_in_options.merge!(:conditions => conditions) unless conditions.empty?
-          if processor and processor = find_carrierwave_processor(processor)
-            include processor
-            load_cw_processors processor, passing_in_options
-            load_cw_versions processor, passing_in_options
+          if processor and processor = ::CarrierWave::Processor.processors.try(:[], processor) and processor[:block]
+            new_if = [options[:if], processor[:options][:if]]
+            merged_options = processor[:options].merge options
+            merged_options[:if] = new_if if new_if
+            Injector.new(self, merged_options, &processor[:block])
           else
             raise ProcessorNotFoundError, processor
           end
         end
       end
 
-      private
+      alias_method :use_processors, :use_processor
 
-        def load_cw_processors processor, options = {}
-          conditions = options[:conditions] || []
-          processor.cw_processors.each do |cw_processor|
-            new_processors = ::CarrierWave::Processor.arguments_merge *cw_processor[:args]
-            new_conditions = (conditions + [new_processors[:if]]).compact
-            new_processors[:if] = ::CarrierWave::Processor.conditions_merge(*new_conditions) unless new_conditions.empty?
-            process *[new_processors, cw_processor[:block]].compact
-          end
-        end
-
-        def load_cw_versions processor, options = {}
-          conditions = options.delete(:conditions) || []
-          processor.processors.each do |name, v|
-            new_conditions = (conditions + [v.options[:if]]).compact
-            condition = ::CarrierWave::Processor.conditions_merge(*new_conditions) unless new_conditions.empty?
-            version_options = v.options
-            version_options.merge! options if options
-            version_options.merge!(:if => condition) if condition
-            if version_options.empty?
-              version name do
-                include v
-                load_cw_processors v
-              end
-            else
-              version name, version_options do
-                include v
-                load_cw_processors v
-              end
-            end
-            next_level_options = {:from_version => name}
-            next_level_options.merge!(:conditions => new_conditions) unless conditions.empty?
-            load_cw_versions v, next_level_options
-          end
-        end
     end
   end
 end

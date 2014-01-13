@@ -8,7 +8,7 @@ describe CarrierWave::Processor::Dsl do
 
   it "returns processor node on carrierwave_processor call" do
     processor = carrierwave_processor(:some_processor){}
-    processor.should be_kind_of CarrierWave::Processor::Node
+    processor.should be_kind_of Hash
   end
 
   it "stores processor to centralized hash storage" do
@@ -29,13 +29,6 @@ describe CarrierWave::Processor::Dsl do
       carrierwave_processor(:another_processor){}
     end
     ::CarrierWave::Processor.processors.should_not have_key :another_processor
-  end
-
-  it "saves carrierwave processor arguments to cw_processors" do
-    processor = carrierwave_processor :some do
-      process :nya
-    end
-    processor.cw_processors.first.should == {:args => [:nya], :block => nil}
   end
 
   

@@ -3,7 +3,7 @@ require 'bundler/setup'
 require 'carrierwave'
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'carrierwave/processor'
-require 'carrierwave_test_helper'
+#require 'carrierwave_test_helper'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
