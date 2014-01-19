@@ -1,18 +1,13 @@
 require 'delegate'
 
 class Injector < Module
-  UNPROXIED_METHODS = %w(__send__ __id__ nil? send object_id extend instance_eval class_eval initialize block_given? raise caller method extend_object)
-
-  (instance_methods + private_instance_methods).each do |method|
-    undef_method(method) unless UNPROXIED_METHODS.include?(method.to_s)
-  end
 
   def initialize uploader, opts = {}, &block
     @uploader = uploader
     @outer_version = opts.delete(:outer_version)
     @options = opts
     self.class_eval &block
-    @uploader.extend self
+    @uploader.prepend self
   end
 
   def process *args, &block

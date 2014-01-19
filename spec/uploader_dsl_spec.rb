@@ -15,6 +15,10 @@ describe CarrierWave::Processor::UploaderDsl do
         def chacha
         end
       end
+
+      def test_me
+        "original"
+      end
     end
   end
 
@@ -149,9 +153,28 @@ describe CarrierWave::Processor::UploaderDsl do
     end
 
     FooUploader.send(:use_processor, :some_proc)
-    FooUploader.should respond_to :some_method
-    FooUploader.should_not respond_to :some_method2
-    FooUploader.versions[:test][:uploader].should respond_to :some_method2
+    FooUploader.new.should respond_to :some_method
+    FooUploader.new.should_not respond_to :some_method2
+    FooUploader.versions[:test][:uploader].new.should respond_to :some_method2
+  end
+
+  it 'redefine default methods' do
+
+    carrierwave_processor :some_proc do
+      def test_me
+        "overriden"
+      end
+
+      version :test do
+        def test_me
+          "overriden internal"
+        end
+      end
+    end
+
+    FooUploader.send(:use_processor, :some_proc)
+    FooUploader.new.test_me.should == "overriden"
+    FooUploader.versions[:test][:uploader].new.test_me.should == "overriden internal"
   end
 
 end
