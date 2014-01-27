@@ -1,4 +1,5 @@
 require 'delegate'
+require 'active_support/core_ext/class'
 
 class Injector < Module
 

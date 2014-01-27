@@ -177,4 +177,39 @@ describe CarrierWave::Processor::UploaderDsl do
     FooUploader.versions[:test][:uploader].new.test_me.should == "overriden internal"
   end
 
+  it "doesnt include injector's method_missing into uploader" do
+     carrierwave_processor :some_proc do
+      def test_me
+        "overriden"
+      end
+
+      version :test do
+        def test_me
+          "overriden internal"
+        end
+      end
+    end
+
+    FooUploader.send(:use_processor, :some_proc)
+    FooUploader.new.should_not respond_to :method_missing
+    FooUploader.versions[:test][:uploader].new.should_not respond_to :method_missing
+  end
+
+  it "doesnt break carrrierwave uploader instance versions" do
+    carrierwave_processor :some_proc do
+      def test_me
+        "overriden"
+      end
+
+      version :test do
+        def test_me
+          "overriden internal"
+        end
+      end
+    end
+    FooUploader.send(:use_processor, :some_proc)
+    FooUploader.new.versions.map{|name, uploader| uploader.should be_kind_of FooUploader}
+  end
+
+
 end
