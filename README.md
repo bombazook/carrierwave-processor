@@ -1,7 +1,7 @@
 # Carrierwave::Processor
 
-> ATTENTION! Now works only for rails 4-0-stable head branch
-> Because of carrierwave does not support 4.2, and 4.1 release does not support 'prepend' that only way to make class_eval proxy work
+> ATTENTION! Now works only with rails >= 4.0.3 
+> because of *prepend* support
 
 ## Installation
 To use with Bundler:
