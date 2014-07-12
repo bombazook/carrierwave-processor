@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'carrierwave'
+require_relative 'utils/raise_matcher'
+
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'carrierwave/processor'
 

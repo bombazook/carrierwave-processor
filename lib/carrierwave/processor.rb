@@ -3,15 +3,33 @@ require 'carrierwave'
 require "carrierwave/processor/version"
 require "carrierwave/processor/injector"
 require 'carrierwave/processor/uploader_dsl'
+require 'carrierwave/processor/configuration'
+require 'pathname'
 
 module CarrierWave
   module Processor
+    def self.root
+      Pathname.new(File.expand_path '../..', __FILE__)
+    end
 
     class ProcessorNotFoundError < ::StandardError
     end
 
     class << self
       attr_accessor :processors
+      attr_writer :configuration
+    end
+
+    def self.configuration
+      @configuration ||= Configuration.new
+    end
+
+    def self.configure options={}, &block
+      c = configuration
+      options.each do |k, v|
+        c.send "#{k}=", v
+      end
+      yield c
     end
 
     def self.conditions_merge *args

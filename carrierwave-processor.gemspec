@@ -19,9 +19,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib", "lib/carrierwave"]
   
   spec.add_dependency 'carrierwave'
-  spec.add_dependency 'activesupport', '>= 4.0.4'
+  spec.add_dependency 'activesupport', '>= 4.0.4' # for rails prepend support
   spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_development_dependency "appraisal"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
-  spec.add_development_dependency "factory_girl"
+  spec.add_development_dependency 'sucker_punch'
 end

@@ -211,5 +211,20 @@ describe CarrierWave::Processor::UploaderDsl do
     FooUploader.new.versions.map{|name, uploader| uploader.should be_kind_of FooUploader}
   end
 
+  it 'run block into delay with adding if to options' do
+    CarrierWave::Processor::Backend::Base.any_instance.stub(:create_worker).and_return nil
+    CarrierWave::Processor.configure do |config|
+      config.backend :base
+    end
+    carrierwave_processor :some_proc do
+      delay do
+        process :processing
+      end
+    end
+    
+    FooUploader.should_receive(:process).with(hash_including(:processing, :if))
+    FooUploader.send(:use_processor, :some_proc)
+  end
+
 
 end
