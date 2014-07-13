@@ -11,7 +11,7 @@ module CarrierWave::Processor
       @root_uploader = opts.delete(:root_uploader)
       @options = opts
       self.class_eval &block
-      @uploader.prepend self
+      @uploader.send :prepend, self
     end
 
     def process *args, &block

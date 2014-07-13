@@ -24,7 +24,7 @@ describe "ActiveSupport::Concern" do
     class Ana
     end
 
-    Ana.prepend Module.new
+    Ana.send :prepend, Module.new
 
     expect(Ana.send :singleton_class?).to eq(false)
   end

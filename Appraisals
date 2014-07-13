@@ -1,6 +1,6 @@
 require 'yaml'
 
-ruby_versions = ['2.0', '2.1']
+ruby_versions = ['2.1']
 
 minor_4_0 = 4..8
 minor_4_1 = 0..4

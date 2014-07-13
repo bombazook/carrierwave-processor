@@ -36,7 +36,7 @@ RSpec::Matchers.define :never_raise do |exception_class|
     end
   end
 
-  failure_message_for_should do |player|
+  failure_message do |player|
     global_result
   end
 end

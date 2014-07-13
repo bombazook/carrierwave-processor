@@ -37,7 +37,7 @@ describe 'Injector#delay' do
       config.backend :base
     end
     begin
-      expect{FooUploader.send(:use_processor, :delay_processor)}.to never_raise(CarrierWave::Processor::BackendNotInitializedError)
+      expect(FooUploader.send(:use_processor, :delay_processor)).to never_raise(CarrierWave::Processor::BackendNotInitializedError)
     rescue NotImplementedError
       # can raise NotImplemented
     end
