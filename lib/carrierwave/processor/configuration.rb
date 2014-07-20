@@ -16,6 +16,8 @@ module CarrierWave::Processor
   class Configuration
     delegate :callback, :errback, :stub, :stub_cache, :to => :backend
 
+    attr_writer :backend
+
     def delay
       self
     end
@@ -29,7 +31,7 @@ module CarrierWave::Processor
         require backend_file
         raise BackendNotFound.new(name) unless backend_file
         begin
-          klass = ::CarrierWave::Processor::Backend.const_get(name.to_s.classify)
+          klass = ::CarrierWave::Processor::Backend.const_get(name.to_s.classify.to_sym)
         rescue NameError
           raise BackendNotFound.new(name)
         end

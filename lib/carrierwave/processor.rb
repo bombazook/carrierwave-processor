@@ -32,6 +32,10 @@ module CarrierWave
       yield c
     end
 
+    def self.async_processing? async_id
+      false
+    end
+
     def self.conditions_merge *args
       args.flatten!
       args.compact!
@@ -63,4 +67,4 @@ module CarrierWave
 end
 
 Object.send :include, CarrierWave::Processor::Dsl
-CarrierWave::Uploader::Base.extend CarrierWave::Processor::UploaderDsl
+CarrierWave::Uploader::Base.include CarrierWave::Processor::UploaderDsl

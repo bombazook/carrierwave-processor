@@ -1,25 +1,24 @@
 require 'sucker_punch'
+require_relative './base'
+module CarrierWave::Processor::Backend
+  class SuckerPunch < Base
 
-module CarrierWave::Processor
-  class SuckerPunch < Backend::Base
     class Worker
       include ::SuckerPunch::Job
 
-      def initialize async_id
-        @async_id = async_id
-        super()
+      def perform uploader_inst
+        Thread.current[:uploader] = uploader_inst.class
+        uploader_inst.recreate_versions!
       end
-
-      def perform file
-        @async_processing = @async_id
-        file.recreate_versions!!
-        @async_processing = nil
-      end
-
     end
 
-    def create_worker async_id
-      Worker.new(async_id).async
+    def create_worker
+      Worker.new.async
+    end
+
+    def can_build_uploader? uploader
+      return false if Thread.current[:uploader].nil?
+      Thread.current[:uploader] == uploader
     end
   end
 end

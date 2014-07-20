@@ -39,4 +39,8 @@ RSpec::Matchers.define :never_raise do |exception_class|
   failure_message do |player|
     global_result
   end
+
+  def supports_block_expectations?
+    true
+  end
 end

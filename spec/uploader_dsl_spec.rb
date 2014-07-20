@@ -217,12 +217,18 @@ describe CarrierWave::Processor::UploaderDsl do
       config.backend :base
     end
     carrierwave_processor :some_proc do
+      version :some_version do
+        process :inner_processing
+      end
       delay do
         process :processing
       end
     end
-    
-    FooUploader.should_receive(:process).with(hash_including(:processing, :if))
+
+    FooUploader.should_receive(:version).with(:some_version).and_call_original
+    FooUploader.should_receive(:version).and_call_original
+    FooUploader.should_receive(:process).with(:inner_processing => [])
+    FooUploader.should_receive(:process).with(hash_including(:processing))
     FooUploader.send(:use_processor, :some_proc)
   end
 

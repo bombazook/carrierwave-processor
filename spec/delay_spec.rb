@@ -29,6 +29,7 @@ describe 'Injector#delay' do
   end
 
   it 'raise error on #delay if no backend chosen' do
+    CarrierWave::Processor.configuration.backend = nil
     expect{FooUploader.send(:use_processor, :delay_processor)}.to raise_error(CarrierWave::Processor::BackendNotInitializedError)
   end
 
@@ -37,7 +38,7 @@ describe 'Injector#delay' do
       config.backend :base
     end
     begin
-      expect(FooUploader.send(:use_processor, :delay_processor)).to never_raise(CarrierWave::Processor::BackendNotInitializedError)
+      expect{FooUploader.send(:use_processor, :delay_processor)}.to never_raise(CarrierWave::Processor::BackendNotInitializedError)
     rescue NotImplementedError
       # can raise NotImplemented
     end
