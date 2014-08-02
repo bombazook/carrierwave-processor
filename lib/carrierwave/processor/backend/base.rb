@@ -42,6 +42,10 @@ module CarrierWave::Processor
       def create_worker *args, &block
         raise NotImplementedError.new
       end
+
+      def get_worker
+        @worker ||= create_worker
+      end
     end
   end
 end

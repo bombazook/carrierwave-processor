@@ -11,9 +11,11 @@ module CarrierWave::Processor
       @root_uploader = opts.delete(:root_uploader) 
       unless @root_uploader
         @root_uploader = @uploader
-        unless CarrierWave::Processor.configuration.backend.uploaders.include? @root_uploader
-          CarrierWave::Processor.configuration.backend.uploaders << @root_uploader
-          @root_uploader.after :store, :perform_delayed
+        if CarrierWave::Processor.configuration.backend_configured?
+          unless CarrierWave::Processor.configuration.backend.uploaders.include? @root_uploader
+            CarrierWave::Processor.configuration.backend.uploaders << @root_uploader
+            @root_uploader.after :store, :perform_delayed
+          end
         end
       end
       @options = opts

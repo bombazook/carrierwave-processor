@@ -22,6 +22,10 @@ module CarrierWave::Processor
       self
     end
 
+    def backend_configured?
+      @backend.present?
+    end
+
     def backend name=nil, options={}
       if name
         backends_path = (::CarrierWave::Processor.root + 'carrierwave/processor/backend')

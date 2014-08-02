@@ -9,6 +9,7 @@ module CarrierWave::Processor::Backend
       def perform uploader_inst
         Thread.current[:uploader] = uploader_inst.class
         uploader_inst.recreate_versions!
+        self.terminate
       end
     end
 
