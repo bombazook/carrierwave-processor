@@ -32,10 +32,6 @@ module CarrierWave
       yield c
     end
 
-    def self.async_processing? async_id
-      false
-    end
-
     def self.conditions_merge *args
       args.flatten!
       args.compact!

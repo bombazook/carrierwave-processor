@@ -6,9 +6,11 @@ module CarrierWave::Processor::Backend
     class Worker
       include ::SuckerPunch::Job
 
-      def perform uploader_inst
+      def perform uploader_inst, backend
         Thread.current[:uploader] = uploader_inst.class
         uploader_inst.recreate_versions!
+        ::SuckerPunch.logger.info "Recreated versions for #{uploader_inst}"
+        backend.callbacks.map{|i| i.call(uploader_inst.model)}
       end
     end
 

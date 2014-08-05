@@ -8,7 +8,8 @@ describe CarrierWave::Processor::Backend::SuckerPunch do
         config.backend :sucker_punch
       end
 
-      CarrierWave::Processor.configuration.backend.should be_kind_of CarrierWave::Processor::Backend::Base
+      CarrierWave::Processor.configuration.backend.should be_kind_of CarrierWave::Processor::Backend::SuckerPunch
     end
   end
+  
 end

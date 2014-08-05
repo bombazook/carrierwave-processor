@@ -31,7 +31,7 @@ module CarrierWave
       def perform_delayed *args
         backend = ::CarrierWave::Processor.configuration.backend
         if !backend.can_build_uploader?(self.class) and backend.uploaders.include? self.class
-          ::CarrierWave::Processor.configuration.backend.create_worker.perform(self)
+          ::CarrierWave::Processor.configuration.backend.create_worker.perform(self, backend)
         end
       end
 
