@@ -1,5 +1,8 @@
 require 'sucker_punch'
 require_relative './base'
+
+require 'sucker_punch/async_syntax' if Gem::Version.new(SuckerPunch::VERSION) >= Gem::Version.new('2.0.0')
+
 module CarrierWave::Processor::Backend
   class SuckerPunch < Base
 
