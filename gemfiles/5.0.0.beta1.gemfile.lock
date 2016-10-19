@@ -1,7 +1,7 @@
 PATH
   remote: ../
   specs:
-    carrierwave-processor (1.1.2)
+    carrierwave-processor (1.1.3)
       activesupport (>= 4.0.4)
       carrierwave
 
